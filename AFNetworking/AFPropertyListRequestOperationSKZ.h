@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
-#import "AFHTTPRequestOperation.h"
+#import "AFHTTPRequestOperationSKZ.h"
 
 /**
  `AFPropertyListRequestOperation` is a subclass of `AFHTTPRequestOperation` for downloading and deserializing objects with property list (plist) response data.
@@ -32,7 +32,7 @@
 
  - `application/x-plist`
  */
-@interface AFPropertyListRequestOperation : AFHTTPRequestOperation
+@interface AFPropertyListRequestOperationSKZ : AFHTTPRequestOperationSKZ
 
 ///----------------------------
 /// @name Getting Response Data

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "AFJSONRequestOperation.h"
+#import "AFJSONRequestOperationSKZ.h"
 
 static dispatch_queue_t json_request_operation_processing_queue() {
     static dispatch_queue_t af_json_request_operation_processing_queue;
@@ -32,13 +32,13 @@ static dispatch_queue_t json_request_operation_processing_queue() {
     return af_json_request_operation_processing_queue;
 }
 
-@interface AFJSONRequestOperation ()
+@interface AFJSONRequestOperationSKZ ()
 @property (readwrite, nonatomic, strong) id responseJSON;
 @property (readwrite, nonatomic, strong) NSError *JSONError;
 @property (readwrite, nonatomic, strong) NSRecursiveLock *lock;
 @end
 
-@implementation AFJSONRequestOperation
+@implementation AFJSONRequestOperationSKZ
 @synthesize responseJSON = _responseJSON;
 @synthesize JSONReadingOptions = _JSONReadingOptions;
 @synthesize JSONError = _JSONError;
@@ -48,14 +48,14 @@ static dispatch_queue_t json_request_operation_processing_queue() {
 										success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, id JSON))success
 										failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON))failure
 {
-    AFJSONRequestOperation *requestOperation = [(AFJSONRequestOperation *)[self alloc] initWithRequest:urlRequest];
-    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFJSONRequestOperationSKZ *requestOperation = [(AFJSONRequestOperationSKZ *)[self alloc] initWithRequest:urlRequest];
+    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperationSKZ *operation, id responseObject) {
         if (success) {
             success(operation.request, operation.response, responseObject);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperationSKZ *operation, NSError *error) {
         if (failure) {
-            failure(operation.request, operation.response, error, [(AFJSONRequestOperation *)operation responseJSON]);
+            failure(operation.request, operation.response, error, [(AFJSONRequestOperationSKZ *)operation responseJSON]);
         }
     }];
 
@@ -110,8 +110,8 @@ static dispatch_queue_t json_request_operation_processing_queue() {
     return [[[request URL] pathExtension] isEqualToString:@"json"] || [super canProcessRequest:request];
 }
 
-- (void)setCompletionBlockWithSuccess:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
-                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+- (void)setCompletionBlockWithSuccess:(void (^)(AFHTTPRequestOperationSKZ *operation, id responseObject))success
+                              failure:(void (^)(AFHTTPRequestOperationSKZ *operation, NSError *error))failure
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-retain-cycles"
