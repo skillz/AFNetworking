@@ -1,6 +1,6 @@
 // UIImageView+AFNetworking.m
 //
-// Copyright (c) 2013 AFNetworking (http://afnetworking.com)
+// Copyright (c) 2011 Gowalla (http://gowalla.com/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,91 +20,61 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "UIImageView+AFNetworking.h"
-
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+#import "UIImageView+AFNetworking.h"
 
-#import "AFHTTPRequestOperation.h"
-
-@interface AFImageCache : NSCache <AFImageCache>
+@interface AFImageCache : NSCache
+- (UIImage *)cachedImageForRequest:(NSURLRequest *)request;
+- (void)cacheImage:(UIImage *)image
+        forRequest:(NSURLRequest *)request;
 @end
 
 #pragma mark -
 
-static char kAFSharedImageCacheKey;
-static char kAFImageRequestOperationKey;
-static char kAFResponseSerializerKey;
+static char kAFImageRequestOperationObjectKey;
 
 @interface UIImageView (_AFNetworking)
-@property (readwrite, nonatomic, strong, setter = af_setImageRequestOperation:) AFHTTPRequestOperation *af_imageRequestOperation;
+@property (readwrite, nonatomic, strong, setter = af_setImageRequestOperation:) AFImageRequestOperationSKZ *af_imageRequestOperation;
 @end
 
 @implementation UIImageView (_AFNetworking)
-
-+ (NSOperationQueue *)af_sharedImageRequestOperationQueue {
-    static NSOperationQueue *_af_sharedImageRequestOperationQueue = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _af_sharedImageRequestOperationQueue = [[NSOperationQueue alloc] init];
-        _af_sharedImageRequestOperationQueue.maxConcurrentOperationCount = NSOperationQueueDefaultMaxConcurrentOperationCount;
-    });
-
-    return _af_sharedImageRequestOperationQueue;
-}
-
-- (AFHTTPRequestOperation *)af_imageRequestOperation {
-    return (AFHTTPRequestOperation *)objc_getAssociatedObject(self, &kAFImageRequestOperationKey);
-}
-
-- (void)af_setImageRequestOperation:(AFHTTPRequestOperation *)imageRequestOperation {
-    objc_setAssociatedObject(self, &kAFImageRequestOperationKey, imageRequestOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
+@dynamic af_imageRequestOperation;
 @end
 
 #pragma mark -
 
 @implementation UIImageView (AFNetworking)
-@dynamic imageResponseSerializer;
 
-+ (id <AFImageCache>)sharedImageCache {
-    static AFImageCache *_af_defaultImageCache = nil;
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        _af_defaultImageCache = [[AFImageCache alloc] init];
-
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * __unused notification) {
-            [_af_defaultImageCache removeAllObjects];
-        }];
-    });
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu"
-    return objc_getAssociatedObject(self, &kAFSharedImageCacheKey) ?: _af_defaultImageCache;
-#pragma clang diagnostic pop
+- (AFHTTPRequestOperationSKZ *)af_imageRequestOperation {
+    return (AFHTTPRequestOperationSKZ *)objc_getAssociatedObject(self, &kAFImageRequestOperationObjectKey);
 }
 
-+ (void)setSharedImageCache:(id<AFImageCache>)imageCache {
-    objc_setAssociatedObject(self, &kAFSharedImageCacheKey, imageCache, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)af_setImageRequestOperation:(AFImageRequestOperationSKZ *)imageRequestOperation {
+    objc_setAssociatedObject(self, &kAFImageRequestOperationObjectKey, imageRequestOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (id <AFURLResponseSerialization>)imageResponseSerializer {
-    static id <AFURLResponseSerialization> _af_defaultImageResponseSerializer = nil;
++ (NSOperationQueue *)af_sharedImageRequestOperationQueue {
+    static NSOperationQueue *_af_imageRequestOperationQueue = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _af_defaultImageResponseSerializer = [AFImageResponseSerializer serializer];
+        _af_imageRequestOperationQueue = [[NSOperationQueue alloc] init];
+        [_af_imageRequestOperationQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
     });
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu"
-    return objc_getAssociatedObject(self, &kAFResponseSerializerKey) ?: _af_defaultImageResponseSerializer;
-#pragma clang diagnostic pop
+    return _af_imageRequestOperationQueue;
 }
 
-- (void)setImageResponseSerializer:(id <AFURLResponseSerialization>)serializer {
-    objc_setAssociatedObject(self, &kAFResponseSerializerKey, serializer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
++ (AFImageCache *)af_sharedImageCache {
+    static AFImageCache *_af_imageCache = nil;
+    static dispatch_once_t oncePredicate;
+    dispatch_once(&oncePredicate, ^{
+        _af_imageCache = [[AFImageCache alloc] init];
+    });
+
+    return _af_imageCache;
 }
 
 #pragma mark -
@@ -129,39 +99,53 @@ static char kAFResponseSerializerKey;
 {
     [self cancelImageRequestOperation];
 
-    UIImage *cachedImage = [[[self class] sharedImageCache] cachedImageForRequest:urlRequest];
+    UIImage *cachedImage = [[[self class] af_sharedImageCache] cachedImageForRequest:urlRequest];
     if (cachedImage) {
+        self.af_imageRequestOperation = nil;
+
         if (success) {
             success(nil, nil, cachedImage);
         } else {
             self.image = cachedImage;
         }
-
-        self.af_imageRequestOperation = nil;
     } else {
-        self.image = placeholderImage;
+        if (placeholderImage) {
+            self.image = placeholderImage;
+        }
 
-        __weak __typeof(self)weakSelf = self;
-        self.af_imageRequestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
-        self.af_imageRequestOperation.responseSerializer = self.imageResponseSerializer;
-        [self.af_imageRequestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            __strong __typeof(weakSelf)strongSelf = weakSelf;
-            if ([[urlRequest URL] isEqual:[operation.request URL]]) {
+        AFImageRequestOperationSKZ *requestOperation = [[AFImageRequestOperationSKZ alloc] initWithRequest:urlRequest];
+		
+#ifdef _AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES_
+		requestOperation.allowsInvalidSSLCertificate = YES;
+#endif
+		
+        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperationSKZ *operation, id responseObject) {
+            if ([urlRequest isEqual:[self.af_imageRequestOperation request]]) {
+                if (self.af_imageRequestOperation == operation) {
+                    self.af_imageRequestOperation = nil;
+                }
+
                 if (success) {
-                    success(urlRequest, operation.response, responseObject);
+                    success(operation.request, operation.response, responseObject);
                 } else if (responseObject) {
-                    strongSelf.image = responseObject;
+                    self.image = responseObject;
                 }
             }
 
-            [[[strongSelf class] sharedImageCache] cacheImage:responseObject forRequest:urlRequest];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            if ([[urlRequest URL] isEqual:[operation.request URL]]) {
+            [[[self class] af_sharedImageCache] cacheImage:responseObject forRequest:urlRequest];
+        } failure:^(AFHTTPRequestOperationSKZ *operation, NSError *error) {
+            if ([urlRequest isEqual:[self.af_imageRequestOperation request]]) {
+                if (self.af_imageRequestOperation == operation) {
+                    self.af_imageRequestOperation = nil;
+                }
+
                 if (failure) {
-                    failure(urlRequest, operation.response, error);
+                    failure(operation.request, operation.response, error);
                 }
             }
         }];
+
+        self.af_imageRequestOperation = requestOperation;
 
         [[[self class] af_sharedImageRequestOperationQueue] addOperation:self.af_imageRequestOperation];
     }
