@@ -82,11 +82,15 @@
  - Operation copies do not include `completionBlock`. `completionBlock` often strongly captures a reference to `self`, which would otherwise have the unintuitive side-effect of pointing to the _original_ operation when copied.
  */
 
+#import "AFSecurityPolicy.h"
+/*
 typedef enum {
     AFSSLPinningModeNone,
     AFSSLPinningModePublicKey,
     AFSSLPinningModeCertificate,
 } AFURLConnectionOperationSSLPinningMode;
+*/
+typedef AFSSLPinningMode AFURLConnectionOperationSSLPinningMode;
 
 @interface AFURLConnectionOperationSKZ : NSOperation <NSURLConnectionDelegate,
 #if (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000) || \
