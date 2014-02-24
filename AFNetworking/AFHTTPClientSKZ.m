@@ -566,8 +566,9 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 
     operation.credential = self.defaultCredential;
     operation.SSLPinningMode = self.defaultSSLPinningMode;
+#if DEBUG
     operation.allowsInvalidSSLCertificate = self.allowsInvalidSSLCertificate;
-
+#endif
     return operation;
 }
 

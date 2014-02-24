@@ -654,10 +654,15 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
                 break;
             }
             case AFSSLPinningModeNone: {
-                if (self.allowsInvalidSSLCertificate){
+#if DEBUG
+                if (self.allowsInvalidSSLCertificate)
+                {
                     NSURLCredential *credential = [NSURLCredential credentialForTrust:serverTrust];
                     [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
-                } else {
+                }
+                else
+#endif
+                {
                     SecTrustResultType result = 0;
                     OSStatus status = SecTrustEvaluate(serverTrust, &result);
                     NSAssert(status == errSecSuccess, @"SecTrustEvaluate error: %ld", (long int)status);
@@ -806,8 +811,10 @@ didReceiveResponse:(NSURLResponse *)response
     self.error = [aDecoder decodeObjectForKey:@"error"];
     self.responseData = [aDecoder decodeObjectForKey:@"responseData"];
     self.totalBytesRead = [[aDecoder decodeObjectForKey:@"totalBytesRead"] longLongValue];
+#if DEBUG
     self.allowsInvalidSSLCertificate = [[aDecoder decodeObjectForKey:@"allowsInvalidSSLCertificate"] boolValue];
-
+#endif
+    
     return self;
 }
 
@@ -844,8 +851,9 @@ didReceiveResponse:(NSURLResponse *)response
     operation.authenticationChallenge = self.authenticationChallenge;
     operation.cacheResponse = self.cacheResponse;
     operation.redirectResponse = self.redirectResponse;
+#if DEBUG
     operation.allowsInvalidSSLCertificate = self.allowsInvalidSSLCertificate;
-    
+#endif
     return operation;
 }
 
