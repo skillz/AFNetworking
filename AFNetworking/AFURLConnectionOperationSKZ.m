@@ -226,9 +226,33 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
                            "V1zcsMXrDvu4gI6g3MeshN08BHFxJM7ADA22Q3J0iIanEgkbKjt7wGDF0LlL+VPE"
                            "OxFec3bd197sduc0LukoFhJVT32esRBhRO5Hd3M9z2kku4yntYMCk+v2dbEnFcPg"
                            "inMQ3lgH6J7pw/jZ1iwf7yV4FWC3OQNFautz3WakUi/n5oLZQS3xjxuR6RsN4Nqr"
-                           "Us/KgWlY+5Mso2REJR4E9FLlLZGBt7Lvxt0NonZwoQFNOLM="
- 
-                           
+                           "Us/KgWlY+5Mso2REJR4E9FLlLZGBt7Lvxt0NonZwoQFNOLM=",
+                          @"MIIEsDCCA5igAwIBAgIQZ5GW0z1GUkfeexunAUxYgjANBgkqhkiG9w0BAQUFADBE"
+                           "MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEdMBsGA1UEAxMU"
+                           "R2VvVHJ1c3QgU1NMIENBIC0gRzIwHhcNMTQwMjA3MDAwMDAwWhcNMTUwMjA3MjM1"
+                           "OTU5WjBeMQswCQYDVQQGEwJVUzEWMBQGA1UECBQNTWFzc2FjaHVzZXR0czEPMA0G"
+                           "A1UEBxQGQm9zdG9uMQ8wDQYDVQQKFAZTa2lsbHoxFTATBgNVBAMUDCouc2tpbGx6"
+                           "LmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJMAsc1gC7sbSzF3"
+                           "litbXUGYizlX8YQgVl48ROcKz38MEzn1ZPGqUBucWXalMb7yx5wtp+eyHQsqlWVY"
+                           "Yu7HP4p/pBXhb+TFC/znSRO5Dr3Uoq7M/eKDsIqtISKv46ntM+UehzK/xdtXhzXX"
+                           "nr9A/AGZdDVD18fhZZWB2wZbX46n3PjiD+OyNCfqD8JQ+kUAbXcsyCG1OHwB74UO"
+                           "EfxMF64W0oUIkFQEvDgEqaZ1AARgMFP7tztFOgOv3rVFnle8DJd5aZhfgmh2PNgq"
+                           "A54K9Jrri6VCD9XbjC9Zj2kIRwZblbjBPbbCP/3ePYjnSnXPHBbYe1ix1+XTnTX1"
+                           "jDBho0kCAwEAAaOCAYIwggF+MCMGA1UdEQQcMBqCDCouc2tpbGx6LmNvbYIKc2tp"
+                           "bGx6LmNvbTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIFoDA6BgNVHR8EMzAxMC+g"
+                           "LaArhilodHRwOi8vZ3Rzc2wyLWNybC5nZW90cnVzdC5jb20vZ3Rzc2wyLmNybDBM"
+                           "BgNVHSAERTBDMEEGCmCGSAGG+EUBBzYwMzAxBggrBgEFBQcCARYlaHR0cDovL3d3"
+                           "dy5nZW90cnVzdC5jb20vcmVzb3VyY2VzL2NwczAdBgNVHSUEFjAUBggrBgEFBQcD"
+                           "AQYIKwYBBQUHAwIwHwYDVR0jBBgwFoAUEUrQcznVW2kIXLo9v2SaqIscVbwwcgYI"
+                           "KwYBBQUHAQEEZjBkMCsGCCsGAQUFBzABhh9odHRwOi8vZ3Rzc2wyLW9jc3AuZ2Vv"
+                           "dHJ1c3QuY29tMDUGCCsGAQUFBzAChilodHRwOi8vZ3Rzc2wyLWFpYS5nZW90cnVz"
+                           "dC5jb20vZ3Rzc2wyLmNlcjANBgkqhkiG9w0BAQUFAAOCAQEARD8mkMwLm/wschPl"
+                           "3pLt1DtSI1UMa0um0mMxsZ7TyTywH/iIUsf9+YQPltDNvvZAOSx1vPvE9q000gJs"
+                           "idGa95Y0sMMLvcsbWTzXj2678AlzgKxtnbiCHKfSUrOkpPd6Hya/SZqBBRImsJ9b"
+                           "BFTifnv/ZkeAhTujFqcVnovRKl/B4QM1nlq2HOihabhiO3nyxFekpetxE8Ywtm9n"
+                           "VNJi9k4PNL6zPLD/eJgUB29S4ZaOH+4AnkWiioSjQpdKshACRPjNgOb2jFmiEQ0f"
+                           "sjg5Fcqh2ZSY7W9fapi9BmZhX0+Jghz/qqhVyR9dkEf8RrQ4OtciVtGtevdEs+Q+"
+                           "UkbPZQ=="
                            ];
         /*
         NSBundle *bundle = [NSBundle mainBundle];
