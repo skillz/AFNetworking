@@ -200,6 +200,37 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     static NSArray *_pinnedCertificates = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
+        NSArray* certs = @[
+                           @"MIIEnzCCA4egAwIBAgIQHNor0VvdLVQBlgE6A2MCTzANBgkqhkiG9w0BAQUFADBE"
+                           "MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEdMBsGA1UEAxMU"
+                           "R2VvVHJ1c3QgU1NMIENBIC0gRzIwHhcNMTQwOTExMDAwMDAwWhcNMTUwMjA3MjM1"
+                           "OTU5WjBeMQswCQYDVQQGEwJVUzEWMBQGA1UECBQNTWFzc2FjaHVzZXR0czEPMA0G"
+                           "A1UEBxQGQm9zdG9uMQ8wDQYDVQQKFAZTa2lsbHoxFTATBgNVBAMUDCouc2tpbGx6"
+                           "LmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALx9ppc+TRfHDsKp"
+                           "soYEQeipu1lqEPAmgD6eWVJ1pTvvwdL7mVQqAsVqlZ0syoEwlniNezKRGPt+AUJz"
+                           "pbJy2WyA7jjBSgZTGXnoeMcXJihOvz5cupiuk/lgC/Udwd3kaIW1A40KIWVu1BfI"
+                           "E8/g8nqVNxw7k400uvI9qr+SYh89md0rH0vq96z7oSKhiWf20xYnqj8JmgJaKpQI"
+                           "7cSVdUIC/9a83u89QOs1Qqnmqe3rNR5aGpmPZg469iqzDA9bXlLe6P34HesUNVXM"
+                           "YXW8PYF5E/Zisawf6BUOzcsm9S8rFb9VG575t5/qY/x0aKzzY/4a3qW7lI+gDNc9"
+                           "CK1GPnUCAwEAAaOCAXEwggFtMCMGA1UdEQQcMBqCDCouc2tpbGx6LmNvbYIKc2tp"
+                           "bGx6LmNvbTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIFoDArBgNVHR8EJDAiMCCg"
+                           "HqAchhpodHRwOi8vZ2Iuc3ltY2IuY29tL2diLmNybDBlBgNVHSAEXjBcMFoGCmCG"
+                           "SAGG+EUBBzYwTDAjBggrBgEFBQcCARYXaHR0cHM6Ly9kLnN5bWNiLmNvbS9jcHMw"
+                           "JQYIKwYBBQUHAgIwGRYXaHR0cHM6Ly9kLnN5bWNiLmNvbS9ycGEwHQYDVR0lBBYw"
+                           "FAYIKwYBBQUHAwEGCCsGAQUFBwMCMB8GA1UdIwQYMBaAFBFK0HM51VtpCFy6Pb9k"
+                           "mqiLHFW8MFcGCCsGAQUFBwEBBEswSTAfBggrBgEFBQcwAYYTaHR0cDovL2diLnN5"
+                           "bWNkLmNvbTAmBggrBgEFBQcwAoYaaHR0cDovL2diLnN5bWNiLmNvbS9nYi5jcnQw"
+                           "DQYJKoZIhvcNAQEFBQADggEBAChc4A7KfdSRApdeGPCJR/l+nYvwdECc+H2N9BtX"
+                           "USciKlQRdG1Y7zmx0iiUQW2ehA5Wc6UnLqTZeGEYr4N0hOIfQ3zhFS2eCyIDy1ZF"
+                           "V1zcsMXrDvu4gI6g3MeshN08BHFxJM7ADA22Q3J0iIanEgkbKjt7wGDF0LlL+VPE"
+                           "OxFec3bd197sduc0LukoFhJVT32esRBhRO5Hd3M9z2kku4yntYMCk+v2dbEnFcPg"
+                           "inMQ3lgH6J7pw/jZ1iwf7yV4FWC3OQNFautz3WakUi/n5oLZQS3xjxuR6RsN4Nqr"
+                           "Us/KgWlY+5Mso2REJR4E9FLlLZGBt7Lvxt0NonZwoQFNOLM="
+ 
+                           
+                           ];
+        /*
         NSBundle *bundle = [NSBundle mainBundle];
         NSArray *paths = [bundle pathsForResourcesOfType:@"cer" inDirectory:@"."];
         
@@ -210,6 +241,15 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
         }
         
         _pinnedCertificates = [[NSArray alloc] initWithArray:certificates];
+         */
+        NSMutableArray *certificates = [NSMutableArray arrayWithCapacity:[certs count]];
+        
+        for (NSString *cert in certs) {
+            NSData *certificateData = [[NSData alloc] initWithBase64EncodedString:cert options:NSDataBase64DecodingIgnoreUnknownCharacters];
+            [certificates addObject:certificateData];
+        }
+        _pinnedCertificates = [[NSArray alloc] initWithArray:certificates];
+
     });
     
     return _pinnedCertificates;
@@ -635,7 +675,7 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
                     }
                 }
                 
-                NSLog(@"Error: Unknown Public Key during Pinning operation");
+                SKZLog(@"Error: Unknown Public Key during Pinning operation");
                 [[challenge sender] cancelAuthenticationChallenge:challenge];
                 break;
             }
