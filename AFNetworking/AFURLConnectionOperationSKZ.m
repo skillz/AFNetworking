@@ -227,7 +227,7 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
                            "OxFec3bd197sduc0LukoFhJVT32esRBhRO5Hd3M9z2kku4yntYMCk+v2dbEnFcPg"
                            "inMQ3lgH6J7pw/jZ1iwf7yV4FWC3OQNFautz3WakUi/n5oLZQS3xjxuR6RsN4Nqr"
                            "Us/KgWlY+5Mso2REJR4E9FLlLZGBt7Lvxt0NonZwoQFNOLM=",
-                          @"MIIEsDCCA5igAwIBAgIQZ5GW0z1GUkfeexunAUxYgjANBgkqhkiG9w0BAQUFADBE"
+                        @"MIIEsDCCA5igAwIBAgIQZ5GW0z1GUkfeexunAUxYgjANBgkqhkiG9w0BAQUFADBE"
                            "MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEdMBsGA1UEAxMU"
                            "R2VvVHJ1c3QgU1NMIENBIC0gRzIwHhcNMTQwMjA3MDAwMDAwWhcNMTUwMjA3MjM1"
                            "OTU5WjBeMQswCQYDVQQGEwJVUzEWMBQGA1UECBQNTWFzc2FjaHVzZXR0czEPMA0G"
@@ -347,6 +347,10 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
 
     self.state = AFOperationReadyState;
 
+#if !DEBUG
+    self.SSLPinningMode = AFSSLPinningModePublicKey;
+#endif
+    
     return self;
 }
 
