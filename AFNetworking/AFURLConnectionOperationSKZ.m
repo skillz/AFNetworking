@@ -202,7 +202,8 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     dispatch_once(&onceToken, ^{
         
         NSArray* certs = @[
-                           @"MIIEnzCCA4egAwIBAgIQHNor0VvdLVQBlgE6A2MCTzANBgkqhkiG9w0BAQUFADBE"
+                           // New Skillz Certificate
+                          @"MIIEnzCCA4egAwIBAgIQHNor0VvdLVQBlgE6A2MCTzANBgkqhkiG9w0BAQUFADBE"
                            "MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEdMBsGA1UEAxMU"
                            "R2VvVHJ1c3QgU1NMIENBIC0gRzIwHhcNMTQwOTExMDAwMDAwWhcNMTUwMjA3MjM1"
                            "OTU5WjBeMQswCQYDVQQGEwJVUzEWMBQGA1UECBQNTWFzc2FjaHVzZXR0czEPMA0G"
@@ -227,7 +228,8 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
                            "OxFec3bd197sduc0LukoFhJVT32esRBhRO5Hd3M9z2kku4yntYMCk+v2dbEnFcPg"
                            "inMQ3lgH6J7pw/jZ1iwf7yV4FWC3OQNFautz3WakUi/n5oLZQS3xjxuR6RsN4Nqr"
                            "Us/KgWlY+5Mso2REJR4E9FLlLZGBt7Lvxt0NonZwoQFNOLM=",
-                        @"MIIEsDCCA5igAwIBAgIQZ5GW0z1GUkfeexunAUxYgjANBgkqhkiG9w0BAQUFADBE"
+                           // Old Skillz Certificate
+                          @"MIIEsDCCA5igAwIBAgIQZ5GW0z1GUkfeexunAUxYgjANBgkqhkiG9w0BAQUFADBE"
                            "MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEdMBsGA1UEAxMU"
                            "R2VvVHJ1c3QgU1NMIENBIC0gRzIwHhcNMTQwMjA3MDAwMDAwWhcNMTUwMjA3MjM1"
                            "OTU5WjBeMQswCQYDVQQGEwJVUzEWMBQGA1UECBQNTWFzc2FjaHVzZXR0czEPMA0G"
@@ -252,8 +254,27 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
                            "BFTifnv/ZkeAhTujFqcVnovRKl/B4QM1nlq2HOihabhiO3nyxFekpetxE8Ywtm9n"
                            "VNJi9k4PNL6zPLD/eJgUB29S4ZaOH+4AnkWiioSjQpdKshACRPjNgOb2jFmiEQ0f"
                            "sjg5Fcqh2ZSY7W9fapi9BmZhX0+Jghz/qqhVyR9dkEf8RrQ4OtciVtGtevdEs+Q+"
-                           "UkbPZQ=="
+                           "UkbPZQ==",
+                           // Skillz CA Proxy
+                          @"MIIDAjCCAeqgAwIBAgIBATALBgkqhkiG9w0BAQswJzEYMBYGA1UEAwwPU2tpbGx6"
+                           "IFByb3h5IENBMQswCQYDVQQGEwJVUzAeFw0xNDA5MjkxNTE4MzJaFw0xNTA5Mjkx"
+                           "NTE4MzJaMCcxGDAWBgNVBAMMD1NraWxseiBQcm94eSBDQTELMAkGA1UEBhMCVVMw"
+                           "ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDKycnAQzP3oe8FtgvUwvjS"
+                           "v3wtoqCsEXgwRvBzjcJfOIMcCVVXuTyuSJ+fOcETgiCCYMnyTC7bMC/m3mgYEF0x"
+                           "3SlLuzNx0H6rjlQJXY/tudGMaTMSFN+4cWb21a5DfaJH4LY7CVIroOMd0+07AYn0"
+                           "9gtwwJaP5hOu5GTH8LQPxsPuhGh9zVXUdiDGaQBPWP26RTOzfxw3K+3DDhGu3w+w"
+                           "ZRwjbhABjPhh/0Q4QLYYotdFLI77zNzyUP0q1kpnZmWPah6uI77tXYIAZ/IgTzGm"
+                           "8+BHN01HxbsiTPCKDwZtX2wOYZcwM0cM+DoDXPHhjMdwdwbG2m28FsS66/hV8z2v"
+                           "AgMBAAGjOzA5MA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgKEMBYGA1Ud"
+                           "JQEB/wQMMAoGCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQC8XwGTNl5R669a"
+                           "3rkHIsW6gftyD4J6F1sJuLLT1vng88wyKsbDHIa3PCZwJL5ZD4Mr2/0GECYpmeml"
+                           "HZMVy8rGJaZ4qNC8N4USLG2yNrpePCnX/8YyEzOVCjhUBLvd1SEcM5nQlQaMEHeL"
+                           "g8Sw2mZjNsfETQh8DliVyqWm52WYWwA8msUWuMQwDhMHTGJY8NlEzpAf2JI/zEFX"
+                           "vqIF4NF91tI9//t9ZBv7KgW4k8TreDcPT6BmzL3IAE29MWG8I9fhvck3XalLxmkc"
+                           "1EOjA/JIidxWhe073KuSquJZBEhWEJclQLXb+eBB+iSLfRcpJq3JYa+wVF0Rh5ZO"
+                           "Z3RqcYvI"
                            ];
+    
         /*
         NSBundle *bundle = [NSBundle mainBundle];
         NSArray *paths = [bundle pathsForResourcesOfType:@"cer" inDirectory:@"."];
@@ -678,7 +699,7 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
                     if (status == errSecSuccess) {
                         [trustChain addObject:(__bridge_transfer id)SecTrustCopyPublicKey(trust)];
                     }
-
+                    
                     CFRelease(trust);
                 }
               
@@ -692,7 +713,7 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
             case AFSSLPinningModePublicKey: {
                 NSArray *pinnedPublicKeys = [self.class pinnedPublicKeys];
                 NSAssert([pinnedPublicKeys count] > 0, @"AFSSLPinningModePublicKey needs at least one key file in the application bundle");
-
+                
                 for (id publicKey in trustChain) {
                     for (id pinnedPublicKey in pinnedPublicKeys) {
                         if (AFSecKeyIsEqualToKey((__bridge SecKeyRef)publicKey, (__bridge SecKeyRef)pinnedPublicKey)) {
