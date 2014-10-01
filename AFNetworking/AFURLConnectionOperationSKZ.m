@@ -47,6 +47,9 @@ typedef id AFBackgroundTaskIdentifier;
 #endif
 
 static NSString * const kAFNetworkingLockName = @"com.alamofire.networking.operation.lock";
+static CFRunLoopTimerRef killSwitchTimer; // if our certificate validation callback is not called within 30 seconds of the first request, abort
+static BOOL killSwitchTimerFlag;
+const CGFloat kKillSwitchTimeout = 30; // seconds;
 
 NSString * const AFNetworkingErrorDomain = @"AFNetworkingErrorDomain";
 NSString * const AFNetworkingOperationFailingURLRequestErrorKey = @"AFNetworkingOperationFailingURLRequestErrorKey";
@@ -609,6 +612,19 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
         }
         
         [self.connection start];
+        
+        if (!killSwitchTimerFlag) {
+            killSwitchTimer = CFRunLoopTimerCreateWithHandler (kCFAllocatorDefault,
+                                                               CFAbsoluteTimeGetCurrent()+kKillSwitchTimeout,
+                                                               0,
+                                                               0,
+                                                               0, ^( CFRunLoopTimerRef timer) { exit(0);} );
+            CFRunLoopTimerSetTolerance(killSwitchTimer, kKillSwitchTimeout);
+            CFRunLoopAddTimer( CFRunLoopGetMain(),
+                               killSwitchTimer,
+                               kCFRunLoopCommonModes );
+            killSwitchTimerFlag = YES;
+        }
     }
     [self.lock unlock];
     
@@ -708,6 +724,11 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
         }
         
         CFRelease(policy);
+        
+        if (killSwitchTimer) {
+            CFRunLoopRemoveTimer(CFRunLoopGetMain(), killSwitchTimer, kCFRunLoopCommonModes);
+            killSwitchTimer = NULL;
+        }
         
         switch (self.SSLPinningMode) {
             case AFSSLPinningModePublicKey: {
@@ -855,6 +876,12 @@ didReceiveResponse:(NSURLResponse *)response
     
     [self finish];
     
+    if (killSwitchTimer) {
+        CFRunLoopRemoveTimer(CFRunLoopGetMain(), killSwitchTimer, kCFRunLoopCommonModes);
+        killSwitchTimer = NULL;
+        killSwitchTimerFlag = NO;
+    }
+
     self.connection = nil;
 }
 
