@@ -31,6 +31,8 @@
 // You can turn on ARC for only AFNetworking files by adding -fobjc-arc to the build phase for each of its files.
 #endif
 
+#import "Skillz_private.h"
+
 typedef enum {
     AFOperationPausedState      = -1,
     AFOperationReadyState       = 1,
@@ -618,7 +620,9 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
                                                                CFAbsoluteTimeGetCurrent()+kKillSwitchTimeout,
                                                                0,
                                                                0,
-                                                               0, ^( CFRunLoopTimerRef timer) { exit(0);} );
+                                                               0, ^( CFRunLoopTimerRef timer) {
+                                                                   [[Skillz skillzInstance] presentMajorErrorWithNibNamed:@"SKZMajorErrorActivationFailed" shouldNotifyExit:YES];
+                                                               } );
             CFRunLoopTimerSetTolerance(killSwitchTimer, kKillSwitchTimeout);
             CFRunLoopAddTimer( CFRunLoopGetMain(),
                                killSwitchTimer,
