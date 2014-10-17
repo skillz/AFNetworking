@@ -252,9 +252,11 @@ NSArray * AFQueryStringPairsFromKeyAndValue(NSString *key, id value) {
 
     // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
     NSMutableArray *acceptLanguagesComponents = [NSMutableArray array];
+    NSString *acceptCountry = [[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode] lowercaseString];
+    
     [[NSLocale preferredLanguages] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         float q = 1.0f - (idx * 0.1f);
-        [acceptLanguagesComponents addObject:[NSString stringWithFormat:@"%@;q=%0.1g", obj, q]];
+        [acceptLanguagesComponents addObject:[NSString stringWithFormat:@"%@-%@;q=%0.1g", obj, acceptCountry, q]];
         *stop = q <= 0.5f;
     }];
     [self setDefaultHeader:@"Accept-Language" value:[acceptLanguagesComponents componentsJoinedByString:@", "]];
