@@ -201,6 +201,9 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     return _networkRequestThread;
 }
 
+#pragma GCC diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-string-concatenation"
+
 + (NSArray *)pinnedCertificates {
     static NSArray *_pinnedCertificates = nil;
     static dispatch_once_t onceToken;
@@ -304,6 +307,9 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     
     return _pinnedCertificates;
 }
+
+#pragma GCC diagnostic pop
+
 
 + (NSArray *)pinnedPublicKeys {
     static NSArray *_pinnedPublicKeys = nil;
