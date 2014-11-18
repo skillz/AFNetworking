@@ -381,6 +381,10 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
 
 #if !DEBUG
     self.SSLPinningMode = AFSSLPinningModePublicKey;
+    
+    if (![[urlRequest.URL.host lowercaseString] hasSuffix:@".skillz.com"]) {
+        operation.SSLPinningMode = AFSSLPinningModeNone;
+    }
 #endif
     
     return self;
