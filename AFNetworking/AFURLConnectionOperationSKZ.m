@@ -383,7 +383,7 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     self.SSLPinningMode = AFSSLPinningModePublicKey;
     
     if (![[urlRequest.URL.host lowercaseString] hasSuffix:@".skillz.com"]) {
-        operation.SSLPinningMode = AFSSLPinningModeNone;
+        self.SSLPinningMode = AFSSLPinningModeNone;
     }
 #endif
     
