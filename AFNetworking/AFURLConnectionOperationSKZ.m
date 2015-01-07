@@ -626,6 +626,11 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
         [self.connection start];
         
         if (!killSwitchTimerFlag) {
+            if(killSwitchTimer) {
+                CFRunLoopRemoveTimer(CFRunLoopGetMain(), killSwitchTimer, kCFRunLoopCommonModes);
+                CFRelease(killSwitchTimer);
+                killSwitchTimer = NULL;
+            }
             killSwitchTimer = CFRunLoopTimerCreateWithHandler (kCFAllocatorDefault,
                                                                CFAbsoluteTimeGetCurrent()+kKillSwitchTimeout,
                                                                0,
@@ -741,6 +746,7 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
         
         if (killSwitchTimer) {
             CFRunLoopRemoveTimer(CFRunLoopGetMain(), killSwitchTimer, kCFRunLoopCommonModes);
+            CFRelease(killSwitchTimer);
             killSwitchTimer = NULL;
         }
         
@@ -892,6 +898,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     if (killSwitchTimer) {
         CFRunLoopRemoveTimer(CFRunLoopGetMain(), killSwitchTimer, kCFRunLoopCommonModes);
+        CFRelease(killSwitchTimer);
         killSwitchTimer = NULL;
         killSwitchTimerFlag = NO;
     }
