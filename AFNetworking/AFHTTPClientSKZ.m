@@ -674,6 +674,19 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     [self.operationQueue addOperation:batchedOperation];
 }
 
++ (dispatch_queue_t)backgroundQueue
+{
+    static dispatch_once_t pred;
+    static dispatch_queue_t backgroundQ;
+    
+    dispatch_once(&pred, ^{
+        backgroundQ = dispatch_queue_create("background_http_queue", DISPATCH_QUEUE_SERIAL);
+        
+    });
+    
+    return backgroundQ;
+}
+
 #pragma mark -
 
 - (void)getPath:(NSString *)path
@@ -693,6 +706,8 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 {
 	NSURLRequest *request = [self requestWithMethod:@"POST" path:path parameters:parameters];
 	AFHTTPRequestOperationSKZ *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
+    operation.successCallbackQueue = [[self class] backgroundQueue];
+    
     [self enqueueHTTPRequestOperation:operation];
 }
 
