@@ -38,6 +38,6 @@
 
     #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
         #import "AFNetworkActivityIndicatorManagerSKZ.h"
-        #import "UIImageView+AFNetworking.h"
+        #import "UIImageView+AFNetworkingSKZ.h"
     #endif
 #endif /* _AFNETWORKING_ */
