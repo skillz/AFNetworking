@@ -356,8 +356,8 @@ NSCoding, NSCopying>
  AFNetworking errors. Error codes for `AFNetworkingErrorDomain` correspond to codes in `NSURLErrorDomain`.
  */
 extern NSString * const AFNetworkingErrorDomain;
-extern NSString * const AFNetworkingOperationFailingURLRequestErrorKey;
-extern NSString * const AFNetworkingOperationFailingURLResponseErrorKey;
+extern NSString * const AFNetworkingOperationFailingURLRequestErrorKeySKZ;
+extern NSString * const AFNetworkingOperationFailingURLResponseErrorKeySKZ;
 
 ///--------------------
 /// @name Notifications
@@ -366,9 +366,9 @@ extern NSString * const AFNetworkingOperationFailingURLResponseErrorKey;
 /**
  Posted when an operation begins executing.
  */
-extern NSString * const AFNetworkingOperationDidStartNotification;
+extern NSString * const AFNetworkingOperationDidStartNotificationSKZ;
 
 /**
  Posted when an operation finishes.
  */
-extern NSString * const AFNetworkingOperationDidFinishNotification;
+extern NSString * const AFNetworkingOperationDidFinishNotificationSKZ;

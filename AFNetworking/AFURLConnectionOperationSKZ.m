@@ -54,11 +54,11 @@ static BOOL killSwitchTimerFlag;
 const CGFloat kKillSwitchTimeout = 30; // seconds;
 
 NSString * const AFNetworkingErrorDomain = @"AFNetworkingErrorDomain";
-NSString * const AFNetworkingOperationFailingURLRequestErrorKey = @"AFNetworkingOperationFailingURLRequestErrorKey";
-NSString * const AFNetworkingOperationFailingURLResponseErrorKey = @"AFNetworkingOperationFailingURLResponseErrorKey";
+NSString * const AFNetworkingOperationFailingURLRequestErrorKeySKZ = @"AFNetworkingOperationFailingURLRequestErrorKeySKZ";
+NSString * const AFNetworkingOperationFailingURLResponseErrorKeySKZ = @"AFNetworkingOperationFailingURLResponseErrorKeySKZ";
 
-NSString * const AFNetworkingOperationDidStartNotification = @"com.alamofire.networking.operation.start";
-NSString * const AFNetworkingOperationDidFinishNotification = @"com.alamofire.networking.operation.finish";
+NSString * const AFNetworkingOperationDidStartNotificationSKZ = @"com.alamofire.networking.operation.startSKZ";
+NSString * const AFNetworkingOperationDidFinishNotificationSKZ = @"com.alamofire.networking.operation.finishSKZ";
 
 typedef void (^AFURLConnectionOperationProgressBlock)(NSUInteger bytes, long long totalBytes, long long totalBytesExpected);
 typedef void (^AFURLConnectionOperationAuthenticationChallengeBlock)(NSURLConnection *connection, NSURLAuthenticationChallenge *challenge);
@@ -559,7 +559,7 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-            [notificationCenter postNotificationName:AFNetworkingOperationDidFinishNotification object:self];
+            [notificationCenter postNotificationName:AFNetworkingOperationDidFinishNotificationSKZ object:self];
         });
     }
     
@@ -648,7 +648,7 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     [self.lock unlock];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingOperationDidStartNotification object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingOperationDidStartNotificationSKZ object:self];
     });
     
     if ([self isCancelled]) {
@@ -666,7 +666,7 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     self.state = AFOperationFinishedState;
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingOperationDidFinishNotification object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingOperationDidFinishNotificationSKZ object:self];
     });
 }
 
