@@ -29,7 +29,7 @@
 
 #import "UIImageView+AFNetworkingSKZ.h"
 
-@interface AFImageCache : NSCache
+@interface AFImageCacheSKZ : NSCache
 - (UIImage *)cachedImageForRequest:(NSURLRequest *)request;
 - (void)cacheImage:(UIImage *)image
         forRequest:(NSURLRequest *)request;
@@ -70,11 +70,11 @@ static char kAFImageRequestOperationObjectKey;
     return _af_imageRequestOperationQueue;
 }
 
-+ (AFImageCache *)af_sharedImageCache {
-    static AFImageCache *_af_imageCache = nil;
++ (AFImageCacheSKZ *)af_sharedImageCache {
+    static AFImageCacheSKZ *_af_imageCache = nil;
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
-        _af_imageCache = [[AFImageCache alloc] init];
+        _af_imageCache = [[AFImageCacheSKZ alloc] init];
     });
 
     return _af_imageCache;
@@ -177,7 +177,7 @@ static inline NSString * AFImageCacheKeyFromURLRequest(NSURLRequest *request) {
     return [[request URL] absoluteString];
 }
 
-@implementation AFImageCache
+@implementation AFImageCacheSKZ
 
 - (UIImage *)cachedImageForRequest:(NSURLRequest *)request {
     switch ([request cachePolicy]) {
