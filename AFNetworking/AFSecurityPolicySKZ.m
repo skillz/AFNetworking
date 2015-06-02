@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "AFSecurityPolicy.h"
+#import "AFSecurityPolicySKZ.h"
 
 #if !defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 static NSData * AFSecKeyGetData(SecKeyRef key) {
@@ -171,11 +171,11 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
 
 #pragma mark -
 
-@interface AFSecurityPolicy()
+@interface AFSecurityPolicySKZ()
 @property (readwrite, nonatomic, strong) NSArray *pinnedPublicKeys;
 @end
 
-@implementation AFSecurityPolicy
+@implementation AFSecurityPolicySKZ
 
 + (NSArray *)defaultPinnedCertificates {
     static NSArray *_defaultPinnedCertificates = nil;
@@ -197,14 +197,14 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
 }
 
 + (instancetype)defaultPolicy {
-    AFSecurityPolicy *securityPolicy = [[self alloc] init];
+    AFSecurityPolicySKZ *securityPolicy = [[self alloc] init];
     securityPolicy.SSLPinningMode = AFSSLPinningModeNone;
     
     return securityPolicy;
 }
 
 + (instancetype)policyWithPinningMode:(AFSSLPinningMode)pinningMode {
-    AFSecurityPolicy *securityPolicy = [[self alloc] init];
+    AFSecurityPolicySKZ *securityPolicy = [[self alloc] init];
     securityPolicy.SSLPinningMode = pinningMode;
     securityPolicy.validatesDomainName = YES;
     [securityPolicy setPinnedCertificates:[self defaultPinnedCertificates]];

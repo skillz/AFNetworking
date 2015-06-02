@@ -82,7 +82,7 @@
  - Operation copies do not include `completionBlock`. `completionBlock` often strongly captures a reference to `self`, which would otherwise have the unintuitive side-effect of pointing to the _original_ operation when copied.
  */
 
-#import "AFSecurityPolicy.h"
+#import "AFSecurityPolicySKZ.h"
 /*
 typedef enum {
     AFSSLPinningModeNone,

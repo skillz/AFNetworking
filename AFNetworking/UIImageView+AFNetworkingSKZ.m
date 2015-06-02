@@ -27,7 +27,7 @@
 
 #import "AFImageRequestOperationSKZ.h"
 
-#import "UIImageView+AFNetworking.h"
+#import "UIImageView+AFNetworkingSKZ.h"
 
 @interface AFImageCache : NSCache
 - (UIImage *)cachedImageForRequest:(NSURLRequest *)request;
