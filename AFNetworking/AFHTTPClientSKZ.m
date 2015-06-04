@@ -803,8 +803,8 @@ static inline NSString * AFContentTypeForPathExtension(NSString *extension) {
 #endif
 }
 
-NSUInteger const kAFUploadStream3GSuggestedPacketSize = 1024 * 16;
-NSTimeInterval const kAFUploadStream3GSuggestedDelay = 0.2;
+NSUInteger const kAFUploadStream3GSuggestedPacketSizeSKZ = 1024 * 16;
+NSTimeInterval const kAFUploadStream3GSuggestedDelaySKZ = 0.2;
 
 @interface AFHTTPBodyPartSKZ : NSObject
 @property (nonatomic, assign) NSStringEncoding stringEncoding;
