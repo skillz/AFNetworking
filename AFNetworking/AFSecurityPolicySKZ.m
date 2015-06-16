@@ -198,12 +198,12 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
 
 + (instancetype)defaultPolicy {
     AFSecurityPolicySKZ *securityPolicy = [[self alloc] init];
-    securityPolicy.SSLPinningMode = AFSSLPinningModeNone;
+    securityPolicy.SSLPinningMode = AFSSLPinningModeSKZNone;
     
     return securityPolicy;
 }
 
-+ (instancetype)policyWithPinningMode:(AFSSLPinningMode)pinningMode {
++ (instancetype)policyWithPinningMode:(AFSSLPinningModeSKZ)pinningMode {
     AFSecurityPolicySKZ *securityPolicy = [[self alloc] init];
     securityPolicy.SSLPinningMode = pinningMode;
     securityPolicy.validatesDomainName = YES;
@@ -251,7 +251,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
     __block NSData *matchingCertificateData = nil;
     __block BOOL shouldTrustServer = NO;
     
-    if (self.SSLPinningMode == AFSSLPinningModeNone && self.allowInvalidCertificates) {
+    if (self.SSLPinningMode == AFSSLPinningModeSKZNone && self.allowInvalidCertificates) {
         return YES;
     }
 
@@ -261,9 +261,9 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
 
     NSArray *serverCertificates = AFCertificateTrustChainForServerTrust(serverTrust);
     switch (self.SSLPinningMode) {
-        case AFSSLPinningModeNone:
+        case AFSSLPinningModeSKZNone:
             return YES;
-        case AFSSLPinningModeCertificate: {
+        case AFSSLPinningModeSKZCertificate: {
             if (!self.validatesCertificateChain) {
                 return [self.pinnedCertificates containsObject:[serverCertificates firstObject]];
             }
@@ -278,7 +278,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
             return trustedCertificateCount > 0 && trustedCertificateCount == [serverCertificates count];
         }
             break;
-        case AFSSLPinningModePublicKey: {
+        case AFSSLPinningModeSKZPublicKey: {
             NSUInteger trustedPublicKeyCount = 0;
             NSArray *publicKeys = AFPublicKeyTrustChainForServerTrust(serverTrust);
             if (!self.validatesCertificateChain && [publicKeys count] > 0) {

@@ -90,7 +90,7 @@ typedef enum {
     AFSSLPinningModeCertificate,
 } AFURLConnectionOperationSSLPinningMode;
 */
-typedef AFSSLPinningMode AFURLConnectionOperationSSLPinningMode;
+typedef AFSSLPinningModeSKZ AFURLConnectionOperationSSLPinningMode;
 
 @interface AFURLConnectionOperationSKZ : NSOperation <NSURLConnectionDelegate,
 #if (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000) || \

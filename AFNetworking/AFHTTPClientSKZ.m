@@ -574,7 +574,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     
 #endif
     if (![[urlRequest.URL.host lowercaseString] hasSuffix:@".skillz.com"]) {
-        operation.SSLPinningMode = AFSSLPinningModeNone;
+        operation.SSLPinningMode = AFSSLPinningModeSKZNone;
     }
 
 #if DEBUG
