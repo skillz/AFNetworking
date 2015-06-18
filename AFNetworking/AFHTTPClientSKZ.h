@@ -75,11 +75,11 @@
 
 #ifdef _SYSTEMCONFIGURATION_H
 typedef enum {
-    AFNetworkReachabilityStatusUnknown          = -1,
-    AFNetworkReachabilityStatusNotReachable     = 0,
-    AFNetworkReachabilityStatusReachableViaWWAN = 1,
-    AFNetworkReachabilityStatusReachableViaWiFi = 2,
-} AFNetworkReachabilityStatus;
+    AFNetworkReachabilityStatusUnknownSKZ          = -1,
+    AFNetworkReachabilityStatusNotReachableSKZ     = 0,
+    AFNetworkReachabilityStatusReachableViaWWANSKZ = 1,
+    AFNetworkReachabilityStatusReachableViaWiFiSKZ = 2,
+} AFNetworkReachabilityStatusSKZ;
 #else
 #pragma message("SystemConfiguration framework not found in project, or not included in precompiled header. Network reachability functionality will not be available.")
 #endif
@@ -135,7 +135,7 @@ typedef enum {
  @warning This property requires the `SystemConfiguration` framework. Add it in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
 #ifdef _SYSTEMCONFIGURATION_H
-@property (readonly, nonatomic, assign) AFNetworkReachabilityStatus networkReachabilityStatus;
+@property (readonly, nonatomic, assign) AFNetworkReachabilityStatusSKZ networkReachabilityStatus;
 #endif
 
 /**
@@ -186,7 +186,7 @@ typedef enum {
  @warning This method requires the `SystemConfiguration` framework. Add it in the active target's "Link Binary With Library" build phase, and add `#import <SystemConfiguration/SystemConfiguration.h>` to the header prefix of the project (`Prefix.pch`).
  */
 #ifdef _SYSTEMCONFIGURATION_H
-- (void)setReachabilityStatusChangeBlock:(void (^)(AFNetworkReachabilityStatus status))block;
+- (void)setReachabilityStatusChangeBlock:(void (^)(AFNetworkReachabilityStatusSKZ status))block;
 #endif
 
 ///-------------------------------
