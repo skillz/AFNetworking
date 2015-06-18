@@ -44,7 +44,7 @@ NSString * const AFNetworkingReachabilityDidChangeNotificationSKZ = @"com.alamof
 NSString * const AFNetworkingReachabilityNotificationStatusItemSKZ = @"AFNetworkingReachabilityNotificationStatusItemSKZ";
 
 typedef SCNetworkReachabilityRef AFNetworkReachabilityRef;
-typedef void (^AFNetworkReachabilityStatusBlock)(AFNetworkReachabilityStatus status);
+typedef void (^AFNetworkReachabilityStatusBlock)(AFNetworkReachabilityStatusSKZ status);
 #else
 typedef id AFNetworkReachabilityRef;
 #endif
@@ -194,7 +194,7 @@ NSArray * AFQueryStringPairsFromKeyAndValueSKZ(NSString *key, id value) {
 @property (readwrite, nonatomic, strong) NSOperationQueue *operationQueue;
 #ifdef _SYSTEMCONFIGURATION_H
 @property (readwrite, nonatomic, assign) AFNetworkReachabilityRef networkReachability;
-@property (readwrite, nonatomic, assign) AFNetworkReachabilityStatus networkReachabilityStatus;
+@property (readwrite, nonatomic, assign) AFNetworkReachabilityStatusSKZ networkReachabilityStatus;
 @property (readwrite, nonatomic, copy) AFNetworkReachabilityStatusBlock networkReachabilityStatusBlock;
 #endif
 
@@ -281,7 +281,7 @@ NSArray * AFQueryStringPairsFromKeyAndValueSKZ(NSString *key, id value) {
     }
 
 #ifdef _SYSTEMCONFIGURATION_H
-    self.networkReachabilityStatus = AFNetworkReachabilityStatusUnknown;
+    self.networkReachabilityStatus = AFNetworkReachabilityStatusUnknownSKZ;
     [self startMonitoringNetworkReachability];
 #endif
 
@@ -316,31 +316,31 @@ static BOOL AFURLHostIsIPAddress(NSURL *url) {
     return [url host] && (inet_pton(AF_INET, [[url host] UTF8String], &sa_in) == 1 || inet_pton(AF_INET6, [[url host] UTF8String], &sa_in6) == 1);
 }
 
-static AFNetworkReachabilityStatus AFNetworkReachabilityStatusForFlags(SCNetworkReachabilityFlags flags) {
+static AFNetworkReachabilityStatusSKZ AFNetworkReachabilityStatusForFlags(SCNetworkReachabilityFlags flags) {
     BOOL isReachable = ((flags & kSCNetworkReachabilityFlagsReachable) != 0);
     BOOL needsConnection = ((flags & kSCNetworkReachabilityFlagsConnectionRequired) != 0);
     BOOL canConnectionAutomatically = (((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) || ((flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0));
     BOOL canConnectWithoutUserInteraction = (canConnectionAutomatically && (flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0);
     BOOL isNetworkReachable = (isReachable && (!needsConnection || canConnectWithoutUserInteraction));
 
-    AFNetworkReachabilityStatus status = AFNetworkReachabilityStatusUnknown;
+    AFNetworkReachabilityStatusSKZ status = AFNetworkReachabilityStatusUnknownSKZ;
     if (isNetworkReachable == NO) {
-        status = AFNetworkReachabilityStatusNotReachable;
+        status = AFNetworkReachabilityStatusNotReachableSKZ;
     }
 #if	TARGET_OS_IPHONE
     else if ((flags & kSCNetworkReachabilityFlagsIsWWAN) != 0) {
-        status = AFNetworkReachabilityStatusReachableViaWWAN;
+        status = AFNetworkReachabilityStatusReachableViaWWANSKZ;
     }
 #endif
     else {
-        status = AFNetworkReachabilityStatusReachableViaWiFi;
+        status = AFNetworkReachabilityStatusReachableViaWiFiSKZ;
     }
 
     return status;
 }
 
 static void AFNetworkReachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void *info) {
-    AFNetworkReachabilityStatus status = AFNetworkReachabilityStatusForFlags(flags);
+    AFNetworkReachabilityStatusSKZ status = AFNetworkReachabilityStatusForFlags(flags);
     AFNetworkReachabilityStatusBlock block = (__bridge AFNetworkReachabilityStatusBlock)info;
     if (block) {
         block(status);
@@ -376,7 +376,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     }
 
     __weak __typeof(&*self)weakSelf = self;
-    AFNetworkReachabilityStatusBlock callback = ^(AFNetworkReachabilityStatus status) {
+    AFNetworkReachabilityStatusBlock callback = ^(AFNetworkReachabilityStatusSKZ status) {
         __strong __typeof(&*weakSelf)strongSelf = weakSelf;
         if (!strongSelf) {
             return;
@@ -397,7 +397,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
         SCNetworkReachabilityFlags flags;
         SCNetworkReachabilityGetFlags(self.networkReachability, &flags);
         dispatch_async(dispatch_get_main_queue(), ^{
-            AFNetworkReachabilityStatus status = AFNetworkReachabilityStatusForFlags(flags);
+            AFNetworkReachabilityStatusSKZ status = AFNetworkReachabilityStatusForFlags(flags);
             callback(status);
         });
     }
@@ -414,7 +414,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     }
 }
 
-- (void)setReachabilityStatusChangeBlock:(void (^)(AFNetworkReachabilityStatus status))block {
+- (void)setReachabilityStatusChangeBlock:(void (^)(AFNetworkReachabilityStatusSKZ status))block {
     self.networkReachabilityStatusBlock = block;
 }
 #endif
