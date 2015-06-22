@@ -380,10 +380,10 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
     self.state = AFOperationReadyState;
 
 #if !DEBUG
-    self.SSLPinningMode = AFSSLPinningModePublicKey;
+    self.SSLPinningMode = AFSSLPinningModeSKZPublicKey;
     
     if (![[urlRequest.URL.host lowercaseString] hasSuffix:@".skillz.com"]) {
-        self.SSLPinningMode = AFSSLPinningModeNone;
+        self.SSLPinningMode = AFSSLPinningModeSKZNone;
     }
 #endif
     

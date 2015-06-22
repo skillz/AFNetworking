@@ -570,7 +570,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     operation.SSLPinningMode = self.defaultSSLPinningMode;
     
 #if !DEBUG
-    operation.SSLPinningMode = AFSSLPinningModePublicKey;
+    operation.SSLPinningMode = AFSSLPinningModeSKZPublicKey;
     
 #endif
     if (![[urlRequest.URL.host lowercaseString] hasSuffix:@".skillz.com"]) {
