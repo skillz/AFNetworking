@@ -99,7 +99,7 @@ typedef enum {
 } AFHTTPClientParameterEncoding;
 
 @class AFHTTPRequestOperationSKZ;
-@protocol AFMultipartFormData;
+@protocol AFMultipartFormDataSKZ;
 
 @interface AFHTTPClientSKZ : NSObject <NSCoding, NSCopying>
 
@@ -300,7 +300,7 @@ typedef enum {
 - (NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method
                                                    path:(NSString *)path
                                              parameters:(NSDictionary *)parameters
-                              constructingBodyWithBlock:(void (^)(id <AFMultipartFormData> formData))block;
+                              constructingBodyWithBlock:(void (^)(id <AFMultipartFormDataSKZ> formData))block;
 
 ///-------------------------------
 /// @name Creating HTTP Operations
@@ -545,7 +545,7 @@ extern NSTimeInterval const kAFUploadStream3GSuggestedDelaySKZ;
 /**
  The `AFMultipartFormData` protocol defines the methods supported by the parameter in the block argument of `AFHTTPClient -multipartFormRequestWithMethod:path:parameters:constructingBodyWithBlock:`.
  */
-@protocol AFMultipartFormData
+@protocol AFMultipartFormDataSKZ
 
 /**
  Appends the HTTP header `Content-Disposition: file; filename=#{generated filename}; name=#{name}"` and `Content-Type: #{generated mimeType}`, followed by the encoded file data and the multipart form boundary.

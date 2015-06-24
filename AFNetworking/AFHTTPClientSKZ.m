@@ -177,7 +177,7 @@ NSArray * AFQueryStringPairsFromKeyAndValueSKZ(NSString *key, id value) {
     return mutableQueryStringComponents;
 }
 
-@interface AFStreamingMultipartFormDataSKZ : NSObject <AFMultipartFormData>
+@interface AFStreamingMultipartFormDataSKZ : NSObject <AFMultipartFormDataSKZ>
 - (id)initWithURLRequest:(NSMutableURLRequest *)urlRequest
           stringEncoding:(NSStringEncoding)encoding;
 
@@ -513,7 +513,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 - (NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method
                                                    path:(NSString *)path
                                              parameters:(NSDictionary *)parameters
-                              constructingBodyWithBlock:(void (^)(id <AFMultipartFormData> formData))block
+                              constructingBodyWithBlock:(void (^)(id <AFMultipartFormDataSKZ> formData))block
 {
     NSParameterAssert(method);
     NSParameterAssert(![method isEqualToString:@"GET"] && ![method isEqualToString:@"HEAD"]);
