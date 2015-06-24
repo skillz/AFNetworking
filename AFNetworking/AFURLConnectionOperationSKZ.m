@@ -636,7 +636,7 @@ static BOOL AFSecKeyIsEqualToKey(SecKeyRef key1, SecKeyRef key2) {
                                                                0,
                                                                0,
                                                                0, ^( CFRunLoopTimerRef timer) {
-                                                                   [[Skillz skillzInstance] presentMajorErrorWithType:kSKZMajorErrorServerDown
+                                                                   [[Skillz skillzInstance] presentMajorErrorWithType:kSKZMajorErrorNoConnection
                                                                                                      shouldNotifyExit:YES];
                                                                } );
             CFRunLoopTimerSetTolerance(killSwitchTimer, kKillSwitchTimeout);
