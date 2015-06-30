@@ -163,7 +163,7 @@ NSArray * AFQueryStringPairsFromKeyAndValueSKZ(NSString *key, id value) {
     } else if ([value isKindOfClass:[NSArray class]]) {
         NSArray *array = value;
         [array enumerateObjectsUsingBlock:^(id nestedValue, NSUInteger idx, BOOL *stop) {
-            [mutableQueryStringComponents addObjectsFromArray:AFQueryStringPairsFromKeyAndValueSKZ([NSString stringWithFormat:@"%@[%d]", key, idx], nestedValue)];
+            [mutableQueryStringComponents addObjectsFromArray:AFQueryStringPairsFromKeyAndValueSKZ([NSString stringWithFormat:@"%@[%lu]", key, (unsigned long)idx], nestedValue)];
         }];
     } else if ([value isKindOfClass:[NSSet class]]) {
         NSSet *set = value;
