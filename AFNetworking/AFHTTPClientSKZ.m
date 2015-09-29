@@ -254,9 +254,13 @@ NSArray * AFQueryStringPairsFromKeyAndValueSKZ(NSString *key, id value) {
     NSMutableArray *acceptLanguagesComponents = [NSMutableArray array];
     NSString *acceptCountry = [[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode] lowercaseString];
     
-    [[NSLocale preferredLanguages] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [[NSLocale preferredLanguages] enumerateObjectsUsingBlock:^(NSString *langCode, NSUInteger idx, BOOL *stop) {
         float q = 1.0f - (idx * 0.1f);
-        [acceptLanguagesComponents addObject:[NSString stringWithFormat:@"%@-%@;q=%0.1g", obj, acceptCountry, q]];
+        if ([langCode rangeOfString:@"-"].location == NSNotFound) {
+            langCode = [langCode stringByAppendingFormat:@"-%@", acceptCountry];
+        }
+
+        [acceptLanguagesComponents addObject:[NSString stringWithFormat:@"%@;q=%0.1g", langCode, q]];
         *stop = q <= 0.5f;
     }];
     [self setDefaultHeader:@"Accept-Language" value:[acceptLanguagesComponents componentsJoinedByString:@", "]];
