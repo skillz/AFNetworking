@@ -569,18 +569,17 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     operation.credential = self.defaultCredential;
     operation.SSLPinningMode = self.defaultSSLPinningMode;
     
-#if !DEBUG
     operation.SSLPinningMode = AFSSLPinningModeSKZPublicKey;
     
-#endif
-    if (![[urlRequest.URL.host lowercaseString] hasSuffix:@".skillz.com"]) {
+    // use unicode to make the "skillz.com" string harder to grep for
+    if (![[urlRequest.URL.host lowercaseString] hasSuffix:[[NSString alloc] initWithBytes:L"skillz.com"
+                                                                                   length:sizeof(L"skillz.com")
+                                                                                 encoding:NSUTF32LittleEndianStringEncoding]]) {
         operation.SSLPinningMode = AFSSLPinningModeSKZNone;
     }
 
-#if DEBUG
-    operation.allowsInvalidSSLCertificate = self.allowsInvalidSSLCertificate;
-#endif
-
+    operation.allowsInvalidSSLCertificate = NO;
+    
     return operation;
 }
 
