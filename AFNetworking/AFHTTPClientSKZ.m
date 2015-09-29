@@ -577,7 +577,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
     
     // use unicode to make the "skillz.com" string harder to grep for
     if (![[urlRequest.URL.host lowercaseString] hasSuffix:[[NSString alloc] initWithBytes:L"skillz.com"
-                                                                                   length:sizeof(L"skillz.com")
+                                                                                   length:sizeof(L"skillz.com")-1
                                                                                  encoding:NSUTF32LittleEndianStringEncoding]]) {
         operation.SSLPinningMode = AFSSLPinningModeSKZNone;
     }
