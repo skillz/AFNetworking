@@ -581,9 +581,14 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
                                                                                  encoding:NSUTF32LittleEndianStringEncoding]]) {
         operation.SSLPinningMode = AFSSLPinningModeSKZNone;
     }
-
     operation.allowsInvalidSSLCertificate = NO;
     
+    if ([SKZEnvironmentManager currentEnv] == SKZCustom) {
+        operation.SSLPinningMode = AFSSLPinningModeSKZNone;
+        operation.allowsInvalidSSLCertificate = YES;
+        
+    }
+
     return operation;
 }
 
