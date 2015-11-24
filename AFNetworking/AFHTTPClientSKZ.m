@@ -584,13 +584,15 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
         operation.SSLPinningMode = AFSSLPinningModeSKZNone;
     }
     operation.allowsInvalidSSLCertificate = NO;
-    
+
+#ifdef DEBUG
     if ([SKZEnvironmentManager currentEnv] == SKZCustom) {
         operation.SSLPinningMode = AFSSLPinningModeSKZNone;
         operation.allowsInvalidSSLCertificate = YES;
         
     }
-
+#endif
+    
     return operation;
 }
 
