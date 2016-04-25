@@ -451,7 +451,11 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 }
 
 - (void)setDefaultHeader:(NSString *)header value:(NSString *)value {
-	[self.defaultHeaders setValue:value forKey:header];
+    if ([value isKindOfClass:[NSString class]] &&
+        [header isKindOfClass:[NSString class]])
+    {
+        [self.defaultHeaders setValue:value forKey:header];
+    }
 }
 
 - (void)setAuthorizationHeaderWithUsername:(NSString *)username password:(NSString *)password {
