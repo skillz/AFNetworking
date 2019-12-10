@@ -1,4 +1,5 @@
-// UIActivityIndicatorView+AFNetworking.m
+// UIRefreshControl+AFNetworking.m
+//
 // Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,83 +20,81 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import "UIActivityIndicatorView+AFNetworking.h"
+#import "UIRefreshControl+AFNetworking.h"
 #import <objc/runtime.h>
 
-#if TARGET_OS_IOS || TARGET_OS_TV
+#if TARGET_OS_IOS
 
 #import "AFURLSessionManager.h"
 
-@interface AFActivityIndicatorViewNotificationObserver : NSObject
-@property (readonly, nonatomic, weak) UIActivityIndicatorView *activityIndicatorView;
-- (instancetype)initWithActivityIndicatorView:(UIActivityIndicatorView *)activityIndicatorView;
+@interface AFRefreshControlNotificationObserver : NSObject
+@property (readonly, nonatomic, weak) UIRefreshControl *refreshControl;
+- (instancetype)initWithActivityRefreshControl:(UIRefreshControl *)refreshControl;
 
-- (void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task;
+- (void)setRefreshingWithStateOfTask:(NSURLSessionTask *)task;
 
 @end
 
-@implementation UIActivityIndicatorView (AFNetworking)
+@implementation UIRefreshControl (AFNetworking)
 
-- (AFActivityIndicatorViewNotificationObserver *)af_notificationObserver {
-    AFActivityIndicatorViewNotificationObserver *notificationObserver = objc_getAssociatedObject(self, @selector(af_notificationObserver));
+- (AFRefreshControlNotificationObserver *)af_notificationObserver {
+    AFRefreshControlNotificationObserver *notificationObserver = objc_getAssociatedObject(self, @selector(af_notificationObserver));
     if (notificationObserver == nil) {
-        notificationObserver = [[AFActivityIndicatorViewNotificationObserver alloc] initWithActivityIndicatorView:self];
+        notificationObserver = [[AFRefreshControlNotificationObserver alloc] initWithActivityRefreshControl:self];
         objc_setAssociatedObject(self, @selector(af_notificationObserver), notificationObserver, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return notificationObserver;
 }
 
-- (void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task {
-    [[self af_notificationObserver] setAnimatingWithStateOfTask:task];
+- (void)setRefreshingWithStateOfTask:(NSURLSessionTask *)task {
+    [[self af_notificationObserver] setRefreshingWithStateOfTask:task];
 }
 
 @end
 
-@implementation AFActivityIndicatorViewNotificationObserver
+@implementation AFRefreshControlNotificationObserver
 
-- (instancetype)initWithActivityIndicatorView:(UIActivityIndicatorView *)activityIndicatorView
+- (instancetype)initWithActivityRefreshControl:(UIRefreshControl *)refreshControl
 {
     self = [super init];
     if (self) {
-        _activityIndicatorView = activityIndicatorView;
+        _refreshControl = refreshControl;
     }
     return self;
 }
 
-- (void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task {
+- (void)setRefreshingWithStateOfTask:(NSURLSessionTask *)task {
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
 
     [notificationCenter removeObserver:self name:AFNetworkingTaskDidResumeNotification object:nil];
     [notificationCenter removeObserver:self name:AFNetworkingTaskDidSuspendNotification object:nil];
     [notificationCenter removeObserver:self name:AFNetworkingTaskDidCompleteNotification object:nil];
-    
-    if (task) {
-        if (task.state != NSURLSessionTaskStateCompleted) {
-            UIActivityIndicatorView *activityIndicatorView = self.activityIndicatorView;
-            if (task.state == NSURLSessionTaskStateRunning) {
-                [activityIndicatorView startAnimating];
-            } else {
-                [activityIndicatorView stopAnimating];
-            }
 
-            [notificationCenter addObserver:self selector:@selector(af_startAnimating) name:AFNetworkingTaskDidResumeNotification object:task];
-            [notificationCenter addObserver:self selector:@selector(af_stopAnimating) name:AFNetworkingTaskDidCompleteNotification object:task];
-            [notificationCenter addObserver:self selector:@selector(af_stopAnimating) name:AFNetworkingTaskDidSuspendNotification object:task];
+    if (task) {
+        UIRefreshControl *refreshControl = self.refreshControl;
+        if (task.state == NSURLSessionTaskStateRunning) {
+            [refreshControl beginRefreshing];
+
+            [notificationCenter addObserver:self selector:@selector(af_beginRefreshing) name:AFNetworkingTaskDidResumeNotification object:task];
+            [notificationCenter addObserver:self selector:@selector(af_endRefreshing) name:AFNetworkingTaskDidCompleteNotification object:task];
+            [notificationCenter addObserver:self selector:@selector(af_endRefreshing) name:AFNetworkingTaskDidSuspendNotification object:task];
+        } else {
+            [refreshControl endRefreshing];
         }
     }
 }
 
 #pragma mark -
 
-- (void)af_startAnimating {
+- (void)af_beginRefreshing {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activityIndicatorView startAnimating];
+        [self.refreshControl beginRefreshing];
     });
 }
 
-- (void)af_stopAnimating {
+- (void)af_endRefreshing {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.activityIndicatorView stopAnimating];
+        [self.refreshControl endRefreshing];
     });
 }
 

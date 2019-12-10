@@ -1,5 +1,8 @@
-// UIActivityIndicatorView+AFNetworking.h
-// Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
+//
+//  UIImage+AFNetworking.h
+//  
+//
+//  Created by Paulo Ferreira on 08/07/15.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,29 +22,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import <Foundation/Foundation.h>
-
-#import <TargetConditionals.h>
-
 #if TARGET_OS_IOS || TARGET_OS_TV
 
 #import <UIKit/UIKit.h>
 
-/**
- This category adds methods to the UIKit framework's `UIActivityIndicatorView` class. The methods in this category provide support for automatically starting and stopping animation depending on the loading state of a session task.
- */
-@interface UIActivityIndicatorView (AFNetworking)
+@interface UIImage (AFNetworking)
 
-///----------------------------------
-/// @name Animating for Session Tasks
-///----------------------------------
-
-/**
- Binds the animating state to the state of the specified task.
-
- @param task The task. If `nil`, automatic updating from any previously specified operation will be disabled.
- */
-- (void)setAnimatingWithStateOfTask:(nullable NSURLSessionTask *)task;
++ (UIImage*) safeImageWithData:(NSData*)data;
 
 @end
 

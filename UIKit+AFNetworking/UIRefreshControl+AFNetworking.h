@@ -1,4 +1,5 @@
-// UIProgressView+AFNetworking.h
+// UIRefreshControl+AFNetworking.m
+//
 // Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,39 +24,27 @@
 
 #import <TargetConditionals.h>
 
-#if TARGET_OS_IOS || TARGET_OS_TV
+#if TARGET_OS_IOS
 
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ This category adds methods to the UIKit framework's `UIRefreshControl` class. The methods in this category provide support for automatically beginning and ending refreshing depending on the loading state of a session task.
+ */
+@interface UIRefreshControl (AFNetworking)
+
+///-----------------------------------
+/// @name Refreshing for Session Tasks
+///-----------------------------------
 
 /**
- This category adds methods to the UIKit framework's `UIProgressView` class. The methods in this category provide support for binding the progress to the upload and download progress of a session task.
+ Binds the refreshing state to the state of the specified task.
+ 
+ @param task The task. If `nil`, automatic updating from any previously specified operation will be disabled.
  */
-@interface UIProgressView (AFNetworking)
-
-///------------------------------------
-/// @name Setting Session Task Progress
-///------------------------------------
-
-/**
- Binds the progress to the upload progress of the specified session task.
-
- @param task The session task.
- @param animated `YES` if the change should be animated, `NO` if the change should happen immediately.
- */
-- (void)setProgressWithUploadProgressOfTask:(NSURLSessionUploadTask *)task
-                                   animated:(BOOL)animated;
-
-/**
- Binds the progress to the download progress of the specified session task.
-
- @param task The session task.
- @param animated `YES` if the change should be animated, `NO` if the change should happen immediately.
- */
-- (void)setProgressWithDownloadProgressOfTask:(NSURLSessionDownloadTask *)task
-                                     animated:(BOOL)animated;
+- (void)setRefreshingWithStateOfTask:(NSURLSessionTask *)task;
 
 @end
 

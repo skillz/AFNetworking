@@ -1,6 +1,5 @@
 // UIImageView+AFNetworking.m
-//
-// Copyright (c) 2011 Gowalla (http://gowalla.com/)
+// Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,61 +19,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import <Foundation/Foundation.h>
-#import <objc/runtime.h>
-
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import "UIImageView+AFNetworking.h"
 
-@interface AFImageCache : NSCache
-- (UIImage *)cachedImageForRequest:(NSURLRequest *)request;
-- (void)cacheImage:(UIImage *)image
-        forRequest:(NSURLRequest *)request;
-@end
+#import <objc/runtime.h>
 
-#pragma mark -
+#if TARGET_OS_IOS || TARGET_OS_TV
 
-static char kAFImageRequestOperationObjectKey;
+#import "AFImageDownloader.h"
 
 @interface UIImageView (_AFNetworking)
-@property (readwrite, nonatomic, strong, setter = af_setImageRequestOperation:) AFImageRequestOperationSKZ *af_imageRequestOperation;
+@property (readwrite, nonatomic, strong, setter = af_setActiveImageDownloadReceipt:) AFImageDownloadReceipt *af_activeImageDownloadReceipt;
 @end
 
 @implementation UIImageView (_AFNetworking)
-@dynamic af_imageRequestOperation;
+
+- (AFImageDownloadReceipt *)af_activeImageDownloadReceipt {
+    return (AFImageDownloadReceipt *)objc_getAssociatedObject(self, @selector(af_activeImageDownloadReceipt));
+}
+
+- (void)af_setActiveImageDownloadReceipt:(AFImageDownloadReceipt *)imageDownloadReceipt {
+    objc_setAssociatedObject(self, @selector(af_activeImageDownloadReceipt), imageDownloadReceipt, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 @end
 
 #pragma mark -
 
 @implementation UIImageView (AFNetworking)
 
-- (AFHTTPRequestOperationSKZ *)af_imageRequestOperation {
-    return (AFHTTPRequestOperationSKZ *)objc_getAssociatedObject(self, &kAFImageRequestOperationObjectKey);
++ (AFImageDownloader *)sharedImageDownloader {
+    return objc_getAssociatedObject(self, @selector(sharedImageDownloader)) ?: [AFImageDownloader defaultInstance];
 }
 
-- (void)af_setImageRequestOperation:(AFImageRequestOperationSKZ *)imageRequestOperation {
-    objc_setAssociatedObject(self, &kAFImageRequestOperationObjectKey, imageRequestOperation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-+ (NSOperationQueue *)af_sharedImageRequestOperationQueue {
-    static NSOperationQueue *_af_imageRequestOperationQueue = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _af_imageRequestOperationQueue = [[NSOperationQueue alloc] init];
-        [_af_imageRequestOperationQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
-    });
-
-    return _af_imageRequestOperationQueue;
-}
-
-+ (AFImageCache *)af_sharedImageCache {
-    static AFImageCache *_af_imageCache = nil;
-    static dispatch_once_t oncePredicate;
-    dispatch_once(&oncePredicate, ^{
-        _af_imageCache = [[AFImageCache alloc] init];
-    });
-
-    return _af_imageCache;
++ (void)setSharedImageDownloader:(AFImageDownloader *)imageDownloader {
+    objc_setAssociatedObject(self, @selector(sharedImageDownloader), imageDownloader, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 #pragma mark -
@@ -94,96 +72,84 @@ static char kAFImageRequestOperationObjectKey;
 
 - (void)setImageWithURLRequest:(NSURLRequest *)urlRequest
               placeholderImage:(UIImage *)placeholderImage
-                       success:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image))success
-                       failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error))failure
+                       success:(void (^)(NSURLRequest *request, NSHTTPURLResponse * _Nullable response, UIImage *image))success
+                       failure:(void (^)(NSURLRequest *request, NSHTTPURLResponse * _Nullable response, NSError *error))failure
 {
-    [self cancelImageRequestOperation];
 
-    UIImage *cachedImage = [[[self class] af_sharedImageCache] cachedImageForRequest:urlRequest];
+    if ([urlRequest URL] == nil) {
+        [self cancelImageDownloadTask];
+        self.image = placeholderImage;
+        return;
+    }
+
+    if ([self isActiveTaskURLEqualToURLRequest:urlRequest]){
+        return;
+    }
+
+    [self cancelImageDownloadTask];
+
+    AFImageDownloader *downloader = [[self class] sharedImageDownloader];
+    id <AFImageRequestCache> imageCache = downloader.imageCache;
+
+    //Use the image from the image cache if it exists
+    UIImage *cachedImage = [imageCache imageforRequest:urlRequest withAdditionalIdentifier:nil];
     if (cachedImage) {
-        self.af_imageRequestOperation = nil;
-
         if (success) {
-            success(nil, nil, cachedImage);
+            success(urlRequest, nil, cachedImage);
         } else {
             self.image = cachedImage;
         }
+        [self clearActiveDownloadInformation];
     } else {
         if (placeholderImage) {
             self.image = placeholderImage;
         }
 
-        AFImageRequestOperationSKZ *requestOperation = [[AFImageRequestOperationSKZ alloc] initWithRequest:urlRequest];
-		
-#ifdef _AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES_
-		requestOperation.allowsInvalidSSLCertificate = YES;
-#endif
-		
-        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperationSKZ *operation, id responseObject) {
-            if ([urlRequest isEqual:[self.af_imageRequestOperation request]]) {
-                if (self.af_imageRequestOperation == operation) {
-                    self.af_imageRequestOperation = nil;
-                }
+        __weak __typeof(self)weakSelf = self;
+        NSUUID *downloadID = [NSUUID UUID];
+        AFImageDownloadReceipt *receipt;
+        receipt = [downloader
+                   downloadImageForURLRequest:urlRequest
+                   withReceiptID:downloadID
+                   success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull responseObject) {
+                       __strong __typeof(weakSelf)strongSelf = weakSelf;
+                       if ([strongSelf.af_activeImageDownloadReceipt.receiptID isEqual:downloadID]) {
+                           if (success) {
+                               success(request, response, responseObject);
+                           } else if(responseObject) {
+                               strongSelf.image = responseObject;
+                           }
+                           [strongSelf clearActiveDownloadInformation];
+                       }
 
-                if (success) {
-                    success(operation.request, operation.response, responseObject);
-                } else if (responseObject) {
-                    self.image = responseObject;
-                }
-            }
+                   }
+                   failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+                       __strong __typeof(weakSelf)strongSelf = weakSelf;
+                        if ([strongSelf.af_activeImageDownloadReceipt.receiptID isEqual:downloadID]) {
+                            if (failure) {
+                                failure(request, response, error);
+                            }
+                            [strongSelf clearActiveDownloadInformation];
+                        }
+                   }];
 
-            [[[self class] af_sharedImageCache] cacheImage:responseObject forRequest:urlRequest];
-        } failure:^(AFHTTPRequestOperationSKZ *operation, NSError *error) {
-            if ([urlRequest isEqual:[self.af_imageRequestOperation request]]) {
-                if (self.af_imageRequestOperation == operation) {
-                    self.af_imageRequestOperation = nil;
-                }
-
-                if (failure) {
-                    failure(operation.request, operation.response, error);
-                }
-            }
-        }];
-
-        self.af_imageRequestOperation = requestOperation;
-
-        [[[self class] af_sharedImageRequestOperationQueue] addOperation:self.af_imageRequestOperation];
+        self.af_activeImageDownloadReceipt = receipt;
     }
 }
 
-- (void)cancelImageRequestOperation {
-    [self.af_imageRequestOperation cancel];
-    self.af_imageRequestOperation = nil;
+- (void)cancelImageDownloadTask {
+    if (self.af_activeImageDownloadReceipt != nil) {
+        [[self.class sharedImageDownloader] cancelTaskForImageDownloadReceipt:self.af_activeImageDownloadReceipt];
+        [self clearActiveDownloadInformation];
+     }
 }
 
-@end
-
-#pragma mark -
-
-static inline NSString * AFImageCacheKeyFromURLRequest(NSURLRequest *request) {
-    return [[request URL] absoluteString];
+- (void)clearActiveDownloadInformation {
+    self.af_activeImageDownloadReceipt = nil;
 }
 
-@implementation AFImageCache
-
-- (UIImage *)cachedImageForRequest:(NSURLRequest *)request {
-    switch ([request cachePolicy]) {
-        case NSURLRequestReloadIgnoringCacheData:
-        case NSURLRequestReloadIgnoringLocalAndRemoteCacheData:
-            return nil;
-        default:
-            break;
-    }
-
-	return [self objectForKey:AFImageCacheKeyFromURLRequest(request)];
-}
-
-- (void)cacheImage:(UIImage *)image
-        forRequest:(NSURLRequest *)request
-{
-    if (image && request) {
-        [self setObject:image forKey:AFImageCacheKeyFromURLRequest(request)];
-    }
+- (BOOL)isActiveTaskURLEqualToURLRequest:(NSURLRequest *)urlRequest {
+    return [self.af_activeImageDownloadReceipt.task.originalRequest.URL.absoluteString isEqualToString:urlRequest.URL.absoluteString];
 }
 
 @end
