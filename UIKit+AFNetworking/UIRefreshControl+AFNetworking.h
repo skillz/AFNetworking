@@ -1,4 +1,4 @@
-// UIKit+AFNetworking.h
+// UIRefreshControl+AFNetworking.m
 //
 // Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
 //
@@ -20,23 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if TARGET_OS_IOS || TARGET_OS_TV
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#ifndef _UIKIT_AFNETWORKING_
-    #define _UIKIT_AFNETWORKING_
+#import <TargetConditionals.h>
 
 #if TARGET_OS_IOS
-    #import "AFAutoPurgingImageCache.h"
-    #import "AFImageDownloader.h"
-    #import "AFNetworkActivityIndicatorManager.h"
-    #import "UIRefreshControl+AFNetworking.h"
-    #import "WKWebView+AFNetworking.h"
-#endif
 
-    #import "UIActivityIndicatorView+AFNetworking.h"
-    #import "UIButton+AFNetworking.h"
-    #import "UIImageView+AFNetworking.h"
-    #import "UIProgressView+AFNetworking.h"
-#endif /* _UIKIT_AFNETWORKING_ */
+#import <UIKit/UIKit.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+/**
+ This category adds methods to the UIKit framework's `UIRefreshControl` class. The methods in this category provide support for automatically beginning and ending refreshing depending on the loading state of a session task.
+ */
+@interface UIRefreshControl (AFNetworking)
+
+///-----------------------------------
+/// @name Refreshing for Session Tasks
+///-----------------------------------
+
+/**
+ Binds the refreshing state to the state of the specified task.
+ 
+ @param task The task. If `nil`, automatic updating from any previously specified operation will be disabled.
+ */
+- (void)setRefreshingWithStateOfTask:(NSURLSessionTask *)task;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
 #endif
