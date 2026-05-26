@@ -23,7 +23,8 @@
 #if !TARGET_OS_WATCH
 
 #import <netinet/in.h>
-#import <netinet6/in6.h>
+// Note: netinet6/in6.h is private in modern iOS SDKs; netinet/in.h provides IPv6 support
+// #import <netinet6/in6.h>
 #import <arpa/inet.h>
 #import <ifaddrs.h>
 #import <netdb.h>
